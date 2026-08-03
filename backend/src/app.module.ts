@@ -23,25 +23,37 @@ import { ImportsModule } from "./imports/imports.module";
   imports: [
   ConfigModule.forRoot({
   isGlobal: true,
-  envFilePath: "./.env",
 }),
 
 TypeOrmModule.forRootAsync({
   inject: [ConfigService],
-  useFactory: (config: ConfigService) => ({
-    type: "postgres",
+  useFactory: (config: ConfigService) => {
+    const databaseUrl = config.get<string>("DATABASE_URL");
 
-    host: config.get("DB_HOST"),
-    port: Number(config.get("DB_PORT")),
-    username: config.get("DB_USERNAME"),
-    password: config.get("DB_PASSWORD"),
-    database: config.get("DB_DATABASE"),
+    return {
+      type: "postgres",
 
-    autoLoadEntities: true,
-    synchronize: true,
+      ...(databaseUrl
+        ? {
+            url: databaseUrl,
+            ssl:
+              config.get("NODE_ENV") === "production"
+                ? { rejectUnauthorized: false }
+                : false,
+          }
+        : {
+            host: config.get<string>("DB_HOST"),
+            port: Number(config.get("DB_PORT")),
+            username: config.get<string>("DB_USERNAME"),
+            password: config.get<string>("DB_PASSWORD"),
+            database: config.get<string>("DB_DATABASE"),
+            ssl: false,
+          }),
 
-    ssl: false,
-  }),
+      autoLoadEntities: true,
+      synchronize: true,
+    };
+  },
 }),
   UsersModule,
 
