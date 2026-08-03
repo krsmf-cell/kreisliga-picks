@@ -28,7 +28,11 @@ app.useStaticAssets(
     }),
   );
 
-  await app.listen(3000);
+ const port = Number(process.env.PORT) || 3000;
+
+await app.listen(port);
+
+console.log(`Server läuft auf Port ${port}`);
 
   console.log("CORS AKTIV");
 }

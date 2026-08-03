@@ -18,32 +18,30 @@ import { PredictionLeagueModule } from "./prediction-league/prediction-league.mo
 import { AdminResetModule } from "./admin-reset/admin-reset.module";
 import { ImportsModule } from "./imports/imports.module";
 
+
 @Module({
   imports: [
   ConfigModule.forRoot({
-    isGlobal: true,
-  }),
+  isGlobal: true,
+  envFilePath: "./.env",
+}),
 
 TypeOrmModule.forRootAsync({
   inject: [ConfigService],
-  useFactory: (config: ConfigService) => {
-    console.log("DATABASE_URL =", process.env.DATABASE_URL);
+  useFactory: (config: ConfigService) => ({
+    type: "postgres",
 
-    return {
-      type: "postgres",
+    host: config.get("DB_HOST"),
+    port: Number(config.get("DB_PORT")),
+    username: config.get("DB_USERNAME"),
+    password: config.get("DB_PASSWORD"),
+    database: config.get("DB_DATABASE"),
 
-      url: config.get<string>("DATABASE_URL"),
+    autoLoadEntities: true,
+    synchronize: true,
 
-      autoLoadEntities: true,
-
-      synchronize: true,
-
-      ssl:
-        process.env.NODE_ENV === "production"
-          ? { rejectUnauthorized: false }
-          : false,
-    };
-  },
+    ssl: false,
+  }),
 }),
   UsersModule,
 
