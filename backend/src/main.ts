@@ -1,25 +1,26 @@
-import { ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { NestExpressApplication } from "@nestjs/platform-express";
-import { join } from "path";
 async function bootstrap() {
-  const app =
-await NestFactory.create<NestExpressApplication>(
-  AppModule,
-);
-app.useStaticAssets(
-  join(__dirname, "..", "uploads"),
-  {
-    prefix: "/uploads/",
-  },
-);
+  console.log("=== START 1 ===");
+
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  console.log("=== START 2 ===");
+
+  app.useStaticAssets(
+    join(__dirname, "..", "uploads"),
+    {
+      prefix: "/uploads/",
+    },
+  );
+
+  console.log("=== START 3 ===");
+
   app.enableCors({
     origin: true,
     credentials: true,
-    methods: '*',
-    allowedHeaders: '*',
+    methods: "*",
+    allowedHeaders: "*",
   });
+
+  console.log("=== START 4 ===");
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -28,13 +29,15 @@ app.useStaticAssets(
     }),
   );
 
- const port = Number(process.env.PORT) || 3000;
+  console.log("=== START 5 ===");
 
-await app.listen(port);
+  const port = Number(process.env.PORT) || 3000;
 
-console.log(`Server läuft auf Port ${port}`);
+  console.log("=== VOR LISTEN ===");
 
-  console.log("CORS AKTIV");
+  await app.listen(port);
+
+  console.log("=== NACH LISTEN ===");
 }
 
 bootstrap();
