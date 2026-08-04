@@ -21,6 +21,7 @@ export class MatchdaysController {
 
   @Get()
   findAll() {
+     console.log("MATCHDAYS CONTROLLER");
     return this.matchdaysService.findAll();
   }
 
