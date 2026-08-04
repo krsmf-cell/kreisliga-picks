@@ -25,13 +25,23 @@ export class MatchdaysService {
   private readonly matchRepo: Repository<Match>,
 ) {}
 
-  findAll() {
-    return this.repo.find({
+  async findAll() {
+  try {
+    const data = await this.repo.find({
       order: {
         number: "ASC",
       },
     });
+
+    console.log("MATCHDAYS:", data);
+
+    return data;
+  } catch (e) {
+    console.error("MATCHDAY ERROR");
+    console.error(e);
+    throw e;
   }
+}
 
   async findOne(id: number) {
     const matchday = await this.repo.findOne({
